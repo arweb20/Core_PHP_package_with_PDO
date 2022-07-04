@@ -1,0 +1,27 @@
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule ^([^.]+)$ $1.php 
+
+RewriteRule ^student/([^.]+)/edit?$ editStudent.php?studentid=$1
+RewriteRule ^idcard/([^.]+)?$ downloadPDF.php?studentid=$1 
+RewriteRule ^certificate/([^.]+)?$ downloadCertificateImage.php?studentid=$1 
+
+#  ----------------------- API Routes -----------------------
+
+#  ----------------------- Login APIS -----------------------
+
+RewriteRule ^api/user-login$ api/login.php [L] 
+
+#  ----------------------- Login APIS -----------------------
+
+#  ----------------------- User APIS -----------------------
+
+RewriteRule ^api/users/([0-9]+)$ api/user.php?userid=$1 [L] 
+RewriteRule ^api/users/limit$ api/user.php?limit [L] 
+RewriteRule ^api/users$ api/user.php [L] 
+
+#  ----------------------- User APIS -----------------------
+
+#  ----------------------- API Routes -----------------------

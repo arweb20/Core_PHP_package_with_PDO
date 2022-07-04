@@ -1,0 +1,49 @@
+<?php
+
+require_once "./constants.php";
+require_once "./customFunctions.php";
+require_once "./api/lib/jwtUtils.php";
+if ((!$_SESSION['PHP_PACKAGE_ADMIN']) && (!$_SESSION['PHP_PACKAGE_TOKEN'])) {
+    redirectPage("login");
+} else {
+    $bearerToken = trim($_SESSION['PHP_PACKAGE_TOKEN']);
+    $validToken = jwtValiditatonCheck($bearerToken, JWT_SECRET_KEY);
+    if ($validToken) {
+        $headerParams = array("Authorization: Bearer " . $_SESSION['PHP_PACKAGE_TOKEN']);
+    } else {
+        redirectPage("logout.php");
+    }
+}
+
+if (isset($_REQUEST['studentid'])) {
+    $studentID = $_REQUEST['studentid'];
+    $apiMethod = "GET";
+    $apiURL = getHostLink("/" . SITE_NAME . "/api/users/" . $studentID);
+    $regStatus = json_decode(callAPI($apiMethod, $apiURL, null, false, $headerParams));
+
+    $statusCode = $regStatus->statusCode;
+    
+    if ($statusCode != 200) {
+        $errorMessage = $regStatus->error;
+    } else {
+        $infoDetail = $regStatus->data;
+        foreach ($infoDetail as $infoDetailVal) {
+            $certificateImage = $infoDetailVal->certificate_image;
+            $certificateImageType = $infoDetailVal->certificate_image_type;
+        }
+       $decoded = base64_decode($certificateImage);
+        $file = $studentID . '.'.explode('/', $certificateImageType)[1];
+        file_put_contents($file, $decoded);
+
+        header('Content-Description: File Transfer');
+        header('Content-Type: '.$certificateImageType);
+        header('Content-Disposition: attachment; filename="' . basename($file) . '"');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate');
+        header('Pragma: public');
+        header('Content-Length: ' . filesize($file));
+        readfile($file);
+        unlink($file);
+        exit;
+    }
+}

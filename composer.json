@@ -1,0 +1,16 @@
+{
+    "name": "arweb/php_with_mysqli",
+    "description": "This is a PHP CRUD tutorial with CURL, REST API and PDO as database connection",
+    "license": "ArWeb license",
+    "authors": [
+        {
+            "name": "Soumyanjan Dey",
+            "email": "arwebcs@gmail.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "files": ["api/models/DB.php", "api/models/User.php", "api/lib/pdflib/autoload.php",
+            "api/lib/phpqrcode/qrlib.php"]
+    }
+}
